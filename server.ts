@@ -13,7 +13,12 @@ import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
 const cors = require("cors");
 const app = express();
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
+const http = require('http')
+const { Server } = require("socket.io")
+const clientOrigin = "http://localhost:3000"
+
+
 app.use(cors());
 //app.use(express.json());
 app.use(bodyParser.json());
@@ -72,6 +77,39 @@ const bookmarkController = BookmarkController.getInstance(app);
 
 // Create message dao, controller and add it to express app.
 const messageController = MessageController.getInstance(app);
+
+// server for socket io
+const server = http.createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: clientOrigin,
+    methods: ["GET", "POST"],
+  },
+})
+
+/**
+ * Socket io routes 
+ *  - Users have the ability to join a "room", which is a conversation between two users
+ *  - Users have the ability to send a message 
+ *  - Users have the ability to disconnect
+ */
+io.on("connection", (socket: any) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("join_room", (data: any) => {
+    socket.join(data);
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  })
+
+  socket.on("send_message", (data: any) => {
+    socket.to(data.room).emit("receive_message", data);
+  })
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", socket.id);
+  })
+})
+
 
 /*
  * Start a server listening at port 4000 locally
