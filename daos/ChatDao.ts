@@ -97,12 +97,6 @@ export default class ChatDao implements ChatDaoI {
    * @returns a JSON object which consits of the latest message.
    */
   lastMessage = async (from: String, to: String): Promise<any> => {
-    return await ChatModel.find(
-      {
-        "messages.from": from,
-        "messages.to": to,
-      },
-      { messages: { $slice: -1 } }
-    );
+    return await ChatModel.find({ from, to }, { messages: { $slice: -1 } });
   };
 }
