@@ -3,29 +3,28 @@ import MessageDaoI from "../interfaces/MessageDaoI";
 const { Server } = require("socket.io")
 
 
-
 export default class MessageController {
+  
   private messageDao: MessageDaoI = MessageDao.getInstance();
-  private server : any = null; 
-  private clientOrigin: string = '';
-  private io = new Server(this.server, {
-    cors: {
-      origin: this.clientOrigin,
-      methods: ["GET", "POST"],
-    },
-  })
-
-
+  private static server : any; 
+  private clientOrigin: string;
+  
   public constructor(server: any, clientOrigin: string) {
-      this.server = server 
+      MessageController.server = server 
       this.clientOrigin = clientOrigin
     }
   
-  
   startSocketConn() {
-    this.io.on("connection", (socket: any) => {
+    const io = new Server(MessageController.server, {
+      cors: {
+        origin: this.clientOrigin,
+        methods: ["GET", "POST"],
+      },
+    })
 
-      console.log(`User Connected: ${socket.id}`);
+    io.on("connection", (socket: any) => {
+
+    //  console.log(`User Connected: ${socket.id}`)
 
       socket.on("join_room", (data: any) => {
         socket.join(data);
@@ -42,6 +41,14 @@ export default class MessageController {
       })
 
     })
+
+    /*
+    * Start a server listening at port 4000 locally
+    * but use environment variable PORT on Heroku if available.
+    */
+    const PORT = process.env.PORT || 4000;
+    MessageController.server.listen(PORT);
+    console.log("Server listening on port:", PORT)
   }
 }
 

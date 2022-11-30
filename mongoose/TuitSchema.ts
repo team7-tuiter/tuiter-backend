@@ -8,7 +8,7 @@ const TuitSchema = new mongoose.Schema<Tuit>({
   tuit: { type: String, required: true },
   postedOn: { type: Date, default: Date.now },
   postedBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'UserModel',
     required: true,
   },

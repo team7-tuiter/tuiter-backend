@@ -30,12 +30,8 @@ export default class ChatDao implements ChatDaoI {
    * @param messages the Chat being recorded.
    * @returns The newly created chat object.
    */
-  createChat = async (
-    userId1: String,
-    userId2: String,
-    messages: Chat
-  ): Promise<Chat> => {
-    return await ChatModel.create({ userId1, userId2, messages });
+  createChat = async ( chat: Chat ): Promise<Chat> => {
+    return await ChatModel.create(chat);
   };
 
   /**
@@ -43,24 +39,37 @@ export default class ChatDao implements ChatDaoI {
    *
    * @param userId1 The smallest user id.
    * @param userId2 The largest user id.
-   * @param messages The new chat in form of request body.
+   * @param message The new message in form of request body.
    * @returns The newly created chat object.
    */
   updateChat = async (
     userId1: String,
     userId2: String,
-    messages: Chat
+    message: string
   ): Promise<any> => {
-    return await ChatModel.updateOne({ userId1, userId2 }, { $set: messages });
+    return await ChatModel.updateOne(
+      { userId1, userId2 }, 
+      { $push: { messages: message } }
+    );
+  };
+
+  /**
+   * Fetches the last message of the user.
+   *
+   * @param from the user id of the sender.
+   * @returns a JSON object which consits of the latest message.
+   */
+  lastMessages = async (from: string): Promise<any> => {
+    return await ChatModel.find({from}, { messages: { $slice: -1 } });
   };
 
   /**
    * Fetches a single chat object based on the user ids provided.
-   *
-   * @param from The user id of the sender.
-   * @param to The user id of the receiver.
-   * @returns The single chat object.
-   */
+    *
+    * @param from The user id of the sender.
+    * @param to The user id of the receiver.
+    * @returns The single chat object.
+    */
   getSingleChat = async (from: String, to: String): Promise<any> => {
     return await ChatModel.find({ from, to }).populate("to");
   };
@@ -72,7 +81,8 @@ export default class ChatDao implements ChatDaoI {
    * @returns A list of chat objects where the user id is the sender.
    */
   getAllChatsById = async (id: String): Promise<Chat[]> => {
-    return await ChatModel.find({ "messages.from": id }).populate("to");
+    const chats = await ChatModel.find({ "messages.from": id }).populate("to");
+    return chats
   };
 
   /**
@@ -89,14 +99,4 @@ export default class ChatDao implements ChatDaoI {
     });
   };
 
-  /**
-   * Fetches the last message of the user.
-   *
-   * @param from the user id of the sender.
-   * @param to the user id of the receriver
-   * @returns a JSON object which consits of the latest message.
-   */
-  lastMessage = async (from: String, to: String): Promise<any> => {
-    return await ChatModel.find({ from, to }, { messages: { $slice: -1 } });
-  };
 }

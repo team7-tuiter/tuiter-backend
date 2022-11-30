@@ -11,11 +11,11 @@ import TuitController from "./controllers/TuitController";
 import UserController from "./controllers/UserController";
 import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
+import ChatController from "./controllers/ChatController";
 const cors = require("cors");
 const app = express();
 const bodyParser = require('body-parser');
 const http = require('http')
-const { Server } = require("socket.io")
 const clientOrigin = "http://localhost:3000"
 
 
@@ -50,14 +50,6 @@ connect(
   }
 );
 
-app.get("/", (req: Request, res: Response) =>
-  res.send("Welcome to Foundation of Software Engineering!!!!")
-);
-
-app.get("/hello", (req: Request, res: Response) =>
-  res.send("Welcome to Foundation of Software Engineering!")
-);
-
 // Create user dao, controller and add it to express app.
 const userDao = new UserDao();
 const userController = new UserController(app, userDao);
@@ -75,16 +67,12 @@ const followController = FollowController.getInstance(app);
 // Create bookmarks dao, controller and add it to express app.
 const bookmarkController = BookmarkController.getInstance(app);
 
+// Create ChatController 
+const chatController = ChatController.getInstance(app)
+
 // server for socket io
 const server = http.createServer(app)
 
-// Create message dao, controller and add it to express app.
+// initialize messageController (socket connection)
 const messageController = new MessageController(server, clientOrigin);
 messageController.startSocketConn()
-
-/*
- * Start a server listening at port 4000 locally
- * but use environment variable PORT on Heroku if available.
- */
-const PORT = 4000;
-server.listen(process.env.PORT || PORT);
