@@ -1,4 +1,4 @@
-import { application, Express, Request, Response } from "express";
+import { Express, Request, Response } from "express";
 import ChatDao from "../daos/ChatDao";
 import ChatControllerI from "../interfaces/ChatControllerI";
 import ChatDaoI from "../interfaces/ChatDaoI";
@@ -10,9 +10,10 @@ export default class ChatController implements ChatControllerI {
     public static getInstance = (app: Express): ChatController => {
         if (ChatController.chatController === null) {
             ChatController.chatController = new ChatController();
-            app.get("api/users/:uid/chats", ChatController.chatController.getAllChatsById);
-            app.delete("api/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
-            app.get("api/users/:uid1/users/:uid2/chat", ChatController.chatController.getSingleChat);
+            app.get("/users/:uid/chats", ChatController.chatController.getAllChatsById);
+            app.delete("/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
+            app.get("/users/:uid1/users/:uid2/chat", ChatController.chatController.getSingleChat);
+            app.post("/chat", ChatController.chatController.createChat)
         }
         return ChatController.chatController;
     }
@@ -22,12 +23,16 @@ export default class ChatController implements ChatControllerI {
     }
 
     deleteSingleChat(req: Request, res: Response): void {
-        //Need to order uid1 and uid2 if not done on frontend
         ChatController.chatDao.deleteSingleChat(req.params.uid1, req.params.uid2).then(result => res.json(result));
     }
     
     getSingleChat(req: Request, res: Response): void {
         ChatController.chatDao.getSingleChat(req.params.uid1, req.params.uid2).then(result => res.json(result));
     }
+
+    createChat(req: Request, res: Response): void {
+        ChatController.chatDao.createChat(req.body).then(result => res.json(result))
+    }
+
     
 }
