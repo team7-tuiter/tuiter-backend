@@ -3,7 +3,7 @@ import MaritalStatus from "./MaritalStatus";
 
 /**
  * A model representation of a single user in our application.
- * 
+ * @property {String} _id the id of the users 
  * @property {String} username The username of the user.
  * @property {String} password The password of the user.
  * @property {String} firstName The first name of the user.
@@ -24,6 +24,7 @@ import MaritalStatus from "./MaritalStatus";
  * @see MaritalStatus
  */
 export default interface User {
+  _id: string;
   username: string;
   password: string;
   firstName: string;

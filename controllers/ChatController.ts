@@ -10,9 +10,9 @@ export default class ChatController implements ChatControllerI {
     public static getInstance = (app: Express): ChatController => {
         if (ChatController.chatController === null) {
             ChatController.chatController = new ChatController();
-            app.get("api/users/:uid/chats", ChatController.chatController.getAllChatsById);
-            app.delete("api/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
-            app.get("api/users/:uid1/users/:uid2/chat", ChatController.chatController.getSingleChat);
+            app.get("/users/:uid/chats", ChatController.chatController.getAllChatsById);
+            app.delete("/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
+            app.get("/users/:uid1/users/:uid2/chat", ChatController.chatController.getSingleChat);
         }
         return ChatController.chatController;
     }
@@ -29,5 +29,6 @@ export default class ChatController implements ChatControllerI {
     getSingleChat(req: Request, res: Response): void {
         ChatController.chatDao.getSingleChat(req.params.uid1, req.params.uid2).then(result => res.json(result));
     }
+
     
 }
