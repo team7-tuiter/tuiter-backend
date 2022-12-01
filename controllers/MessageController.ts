@@ -1,11 +1,11 @@
-import MessageDao from "../daos/MessageDao";
+// import MessageDao from "../daos/MessageDao";
 import MessageDaoI from "../interfaces/MessageDaoI";
 const { Server } = require("socket.io")
 
 
 export default class MessageController {
   
-  private messageDao: MessageDaoI = MessageDao.getInstance();
+  // private messageDao: MessageDaoI = MessageDao.getInstance();
   private static server : any; 
   private clientOrigin: string;
   
