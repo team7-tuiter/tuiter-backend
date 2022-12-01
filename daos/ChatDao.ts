@@ -45,7 +45,7 @@ export default class ChatDao implements ChatDaoI {
   updateChat = async (
     userId1: String,
     userId2: String,
-    message: string
+    message: String
   ): Promise<any> => {
     return await ChatModel.updateOne(
       { userId1, userId2 }, 
