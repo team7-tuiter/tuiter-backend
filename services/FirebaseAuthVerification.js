@@ -9,16 +9,7 @@ admin.initializeApp({
  * when decoded successfully, the ID Token uid  will be returned, else
  * if null is returned then its unauthorized.
  */
-const validateFirebaseToken = async (req) => {
-  let idToken;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer ')
-  ) {
-    idToken = req.headers.authorization.split('Bearer ')[1];
-  } else {
-    return null;
-  }
+const validateFirebaseToken = async (idToken) => {
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     return decodedIdToken.uid;

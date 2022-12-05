@@ -1,19 +1,20 @@
 // import MessageDao from "../daos/MessageDao";
 import MessageDaoI from "../interfaces/MessageDaoI";
+import validateFirebaseToken from "../services/FirebaseAuthVerification";
 const { Server } = require("socket.io")
 
 
 export default class MessageController {
-  
+
   // private messageDao: MessageDaoI = MessageDao.getInstance();
-  private static server : any; 
+  private static server: any;
   private clientOrigin: string;
-  
+
   public constructor(server: any, clientOrigin: string) {
-      MessageController.server = server 
-      this.clientOrigin = clientOrigin
-    }
-  
+    MessageController.server = server
+    this.clientOrigin = clientOrigin
+  }
+
   startSocketConn() {
     const io = new Server(MessageController.server, {
       cors: {
@@ -21,21 +22,36 @@ export default class MessageController {
         methods: ["GET", "POST"],
       },
     })
+    io.use(async (socket: any, next: any) => {
+      if (socket.handshake.query && socket.handshake.query.token) {
+        const uid = await validateFirebaseToken(socket.handshake.query.token);
+        if (uid) {
+          // add uid to session and go next
+          socket.session = { uid };
+          next();
+        } else {
+          next(new Error('Authentication error'));
+        }
+      } else {
+        next(new Error('Authentication error'));
+      }
+    });
 
     io.on("connection", (socket: any) => {
 
-    //  console.log(`User Connected: ${socket.id}`)
+      console.log(`User Connected: ${socket.session.uid}`)
 
       socket.on("join_room", (data: any) => {
+        const uid = socket.session['uid'];
         socket.join(data);
         console.log(`User with ID: ${socket.id} joined room: ${data}`);
       })
-    
+
       socket.on("send_message", (data: any) => {
         socket.to(data.room).emit("receive_message", data);
         // this.messageDao.send(req.params.uid, req.params.tuid, req.body.message)
       })
-    
+
       socket.on("disconnect", () => {
         console.log("User Disconnected", socket.id);
       })
@@ -66,7 +82,7 @@ export default class MessageController {
   // /**
   //  * Sends a new message to a user by creating a message entry in the collection
   //  * messages.
-  //  * 
+  //  *
   //  * @param {Request} req Represents request from client, including the path
   //  * parameter uid representing the user who is sending the message to a user
   //  * identified by path param tuid.
@@ -78,7 +94,7 @@ export default class MessageController {
 
   // /**
   //  * Deletes an existing received message for a user.
-  //  * 
+  //  *
   //  * @param {Request} req Represents request from client, including the path
   //  * parameter uid representing the user who wants to delete the received message
   //  * identified by mid.
@@ -90,7 +106,7 @@ export default class MessageController {
 
   // /**
   //  * List all the sent messages by a specific user.
-  //  * 
+  //  *
   //  * @param {Request} req Represents request from client, including the path
   //  * parameter uid representing the user who wants to see his all sent messages.
   //  * @param {Response} res Represents response to client, including the
@@ -101,7 +117,7 @@ export default class MessageController {
 
   // /**
   //  * List all the received messages for a specific user.
-  //  * 
+  //  *
   //  * @param {Request} req Represents request from client, including the path
   //  * parameter uid representing the user who wants to see his all received messages.
   //  * @param {Response} res Represents response to client, including the
