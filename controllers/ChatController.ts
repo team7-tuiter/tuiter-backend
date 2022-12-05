@@ -13,7 +13,8 @@ export default class ChatController implements ChatControllerI {
             app.get("/users/:uid/chats", ChatController.chatController.getAllChatsById);
             app.delete("/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
             app.get("/users/:uid1/users/:uid2/chat", ChatController.chatController.getSingleChat);
-            app.post("/chat", ChatController.chatController.createChat)
+            app.post("/chat", ChatController.chatController.createChat);
+            app.put("/users/:uid1/users/:uid2/chat", ChatController.chatController.updateChat);
         }
         return ChatController.chatController;
     }
@@ -32,6 +33,10 @@ export default class ChatController implements ChatControllerI {
 
     createChat(req: Request, res: Response): void {
         ChatController.chatDao.createChat(req.body).then(result => res.json(result))
+    }
+
+    updateChat(req: Request, res: Response): void {
+        ChatController.chatDao.updateChat(req.params.uid1, req.params.uid2, req.body).then(result => res.json(result))
     }
 
     
