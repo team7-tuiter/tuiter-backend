@@ -39,17 +39,20 @@ export default class ChatDao implements ChatDaoI {
    *
    * @param userId1 The smallest user id.
    * @param userId2 The largest user id.
-   * @param message The new message in form of request body.
+   * @param message The new message array in form of request body.
    * @returns The newly created chat object.
    */
   updateChat = async (
     userId1: String,
     userId2: String,
-    message: String
+    messages: Chat
   ): Promise<any> => {
-    return await ChatModel.updateOne(
-      { userId1, userId2 }, 
-      { $push: { messages: message } }
+    await ChatModel.deleteOne({
+      "userId1": userId1,
+      "userId2": userId2,
+    });
+    return await ChatModel.create(
+      messages
     );
   };
 
@@ -71,7 +74,7 @@ export default class ChatDao implements ChatDaoI {
     * @returns The single chat object.
     */
   getSingleChat = async (from: String, to: String): Promise<any> => {
-    return await ChatModel.find({ from, to }).populate("to");
+    return await ChatModel.findOne({ from, to });
   };
 
   /**
@@ -81,7 +84,7 @@ export default class ChatDao implements ChatDaoI {
    * @returns A list of chat objects where the user id is the sender.
    */
   getAllChatsById = async (id: String): Promise<Chat[]> => {
-    const chats = await ChatModel.find({ "messages.from": id }).populate("to");
+    const chats = await ChatModel.find({ "messages.from": id });
     return chats
   };
 
