@@ -7,9 +7,10 @@ import User from "../models/User";
  * @file A user schema for user model.
  */
 const UserSchema = new mongoose.Schema<User>({
+  _id: { type: String, required: true}, 
   username: { type: String, required: true },
-  password: { type: String, required: true },
-  firstName: { type: String, required: true },
+  password: { type: String },
+  firstName: { type: String },
   lastName: String,
   email: String,
   profilePhoto: String,
