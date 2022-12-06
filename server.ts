@@ -13,8 +13,7 @@ import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
 import ChatController from "./controllers/ChatController";
 import AuthController from "./controllers/AuthController";
-import * as dotenv from 'dotenv'
-dotenv.config()
+require('dotenv').config()
 
 import admin from 'firebase-admin';
 admin.initializeApp({

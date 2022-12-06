@@ -4,8 +4,8 @@ import UserDao from "../daos/UserDao";
 import admin from 'firebase-admin';
 import User from "../models/User";
 import axios from "axios";
-const FIREBASE_API_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.SKEY}`;
 
+const FIREBASE_API_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.SKEY}`;
 /**
  * @class AuthController Implements RESTful Web service API for 
  * auth related features like signup, signin and loginas.
@@ -60,6 +60,7 @@ export default class AuthController implements AuthControllerI {
         } as User);
         // delete the password field, it should not go to client.
         delete userObj.password
+  
         res.send({
           token: token,
           user: userObj,
@@ -68,7 +69,7 @@ export default class AuthController implements AuthControllerI {
         throw new Error();
       }
     } catch (error) {
-      res.status(403).send("Unauthorized");
+      res.status(401).send("Unauthorized");
     }
   }
 
@@ -84,13 +85,15 @@ export default class AuthController implements AuthControllerI {
     try {
       if (username && password) {
         const result = await axios.post(`${FIREBASE_API_URL}`, { email: `${username}@tuiter.com`, password: password });
+        
         const credential = result.data;
         const userObj = await AuthController.userDao.findUserById(credential.localId);
+        
         delete userObj.password;
         res.send({
           credential: credential,
           user: userObj,
-        });
+        })
       } else {
         throw new Error();
       }
