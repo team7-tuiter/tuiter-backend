@@ -59,11 +59,11 @@ export default class AuthController implements AuthControllerI {
           password: password,
         } as User);
         // delete the password field, it should not go to client.
-        delete userObj.password;
+        delete userObj.password
         res.send({
           token: token,
           user: userObj,
-        });
+        })
       } else {
         throw new Error();
       }
@@ -110,14 +110,14 @@ export default class AuthController implements AuthControllerI {
     const { username } = req.body;
     try {
       if (username) {
-        const userObj = await AuthController.userDao.findUserByUsername(username);
-        const result = await axios.post(`${FIREBASE_API_URL}`, { email: `${username}@tuiter.com`, password: userObj.password });
-        const credential = result.data;
-        delete userObj.password;
+        const userObj = await AuthController.userDao.findUserByUsername(username)
+        const result = await axios.post(`${FIREBASE_API_URL}`, { email: `${username}@tuiter.com`, password: userObj.password })
+        const credential = result.data
+        delete userObj.password
         res.send({
           credential: credential,
           user: userObj,
-        });
+        })
       } else {
         throw new Error();
       }
