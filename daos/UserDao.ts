@@ -26,6 +26,15 @@ export default class UserDao implements UserDaoI {
   }
 
   /**
+   * Fetches a single user object based on the username.
+   * @param uid The usermname of the user.
+   * @returns The JSON object of the user.
+   */
+  async findUserByUsername(username: string): Promise<any> {
+    return await UserModel.findOne({ username: username });
+  }
+
+  /**
    * Creates a new user in the database.
    * @param user The json representation of user object.
    * @returns The newly created user object.
