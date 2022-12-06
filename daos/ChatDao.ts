@@ -29,6 +29,7 @@ export default class ChatDao implements ChatDaoI {
    */
   getAllChatsById = async (userId: String): Promise<Chat[]> => {
     const chats = await ChatModel.find({
+      // check both userId1 and userId2 fields when making the query
       $or: [
         { userId1: userId },
         { userId2: userId }
@@ -64,7 +65,10 @@ export default class ChatDao implements ChatDaoI {
    * @returns List of message objects
    */
   getAllMessagesInSingleChat = async (userId1: String, userId2: String): Promise<any> => {
-    return await ChatModel.find({ userId1, userId2 }, { messages : 1 })
+    return await ChatModel.find(
+      { userId1, userId2 }, 
+      { messages : 1 } // include the messages field
+    )
   }
 
   /**
@@ -100,6 +104,7 @@ export default class ChatDao implements ChatDaoI {
    */
   lastMessages = async (userId: string): Promise<any> => {
     return await ChatModel.find({
+      // check both userId1 and userId2 fields when making the query
       $or: [
         { userId1: userId },
         { userId2: userId }

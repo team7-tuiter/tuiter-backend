@@ -1,7 +1,7 @@
 /**
  * @file Implements an Express Node HTTP server.
  */
-import express, { Request, Response } from "express";
+import express from "express";
 import { connect } from "mongoose";
 import BookmarkController from "./controllers/BookmarkController";
 import FollowController from "./controllers/FollowController";
