@@ -5,10 +5,10 @@ import Chat from "../models/Chat";
  * can be done on the chat collection.
  */
 export default interface ChatDaoI {
-  createChat(chat: Chat): Promise<Chat>;
-  updateChat(userId1: String, userId2: String, message: Chat): Promise<any>;
-  getSingleChat(from: String, to: String): Promise<any>;
-  getAllChatsById(id: String): Promise<Chat[]>;
-  deleteSingleChat(from: String, to: String): Promise<any>;
-  lastMessages(from: String, to: String): Promise<any>;
+  getAllChatsById(userId: String): Promise<Chat[]>
+  deleteSingleChat(userId1: String, userId2: String): Promise<any>
+  createChat(chat: Chat): Promise<Chat>
+  getAllMessagesInSingleChat(userId1: String, userId2: String): Promise<any>
+  deleteSingleMessage(userId1: String, userId2: String, messageId: String): Promise<any>
+  lastMessages(userId: String): Promise<any>
 }
