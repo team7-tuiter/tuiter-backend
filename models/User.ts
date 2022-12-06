@@ -26,7 +26,7 @@ import MaritalStatus from "./MaritalStatus";
 export default interface User {
   _id: string;
   username: string;
-  password: string;
+  password?: string;
   firstName: string;
   lastName: string;
   email: string;
