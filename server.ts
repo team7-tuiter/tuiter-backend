@@ -1,7 +1,7 @@
 /**
  * @file Implements an Express Node HTTP server.
  */
-import express, { Request, Response } from "express";
+import express from "express";
 import { connect } from "mongoose";
 import BookmarkController from "./controllers/BookmarkController";
 import FollowController from "./controllers/FollowController";
@@ -13,6 +13,7 @@ import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
 import ChatController from "./controllers/ChatController";
 import AuthController from "./controllers/AuthController";
+require('dotenv').config()
 
 import admin from 'firebase-admin';
 admin.initializeApp({

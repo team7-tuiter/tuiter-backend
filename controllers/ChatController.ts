@@ -12,9 +12,9 @@ export default class ChatController implements ChatControllerI {
             ChatController.chatController = new ChatController();
             app.get("/users/:uid/chats", ChatController.chatController.getAllChatsById);
             app.delete("/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
-            app.get("/users/:uid1/users/:uid2/chat", ChatController.chatController.getSingleChat);
             app.post("/chat", ChatController.chatController.createChat);
-            app.put("/users/:uid1/users/:uid2/chat", ChatController.chatController.updateChat);
+            app.get("/users/:uid1/users/:uid2/chat", ChatController.chatController.getAllMessagesInSingleChat);
+            app.delete("/users/:uid1/users/:uid2/chat/:messageId", ChatController.chatController.deleteSingleMessage);
         }
         return ChatController.chatController;
     }
@@ -27,17 +27,25 @@ export default class ChatController implements ChatControllerI {
         ChatController.chatDao.deleteSingleChat(req.params.uid1, req.params.uid2).then(result => res.json(result));
     }
     
-    getSingleChat(req: Request, res: Response): void {
-        ChatController.chatDao.getSingleChat(req.params.uid1, req.params.uid2).then(result => res.json(result));
-    }
-
     createChat(req: Request, res: Response): void {
         ChatController.chatDao.createChat(req.body).then(result => res.json(result))
     }
 
-    updateChat(req: Request, res: Response): void {
-        ChatController.chatDao.updateChat(req.params.uid1, req.params.uid2, req.body).then(result => res.json(result))
+    getAllMessagesInSingleChat(req: Request, res: Response): void {
+        ChatController.chatDao.getAllMessagesInSingleChat(req.params.uid1, req.params.uid2).then(result => res.json(result));
     }
+
+    deleteSingleMessage(req: Request, res: Response): void {
+        ChatController.chatDao.deleteSingleMessage(req.params.uid1, req.params.uid2, req.params.messageId).then(result => res.json(result));
+    }
+
+    
+
+
+
+
+
+
 
     
 }
