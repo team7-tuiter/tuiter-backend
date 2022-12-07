@@ -77,7 +77,7 @@ const bookmarkController = BookmarkController.getInstance(app);
 // Create ChatController 
 const chatController = ChatController.getInstance(app)
 
-const authController = AuthController.getInstance(app);
+//const authController = AuthController.getInstance(app);
 
 // server for socket io
 const server = http.createServer(app)
