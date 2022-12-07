@@ -17,8 +17,8 @@ const FIREBASE_API_URL = `https://identitytoolkit.googleapis.com/v1/accounts:sig
  *     <li>POST /auth/loginas to login as different user.</li>
  * </ul>
  * @property {UserDao} userDao Singleton DAO implementing likes User CRUD operations
- * @property {AuthController} authController Singleton controller implementing
- * RESTful Web service API
+ * @property {AuthController} authController Singleton controller implementing RESTful Web service API
+ * @deprecated
  */
 export default class AuthController implements AuthControllerI {
 
