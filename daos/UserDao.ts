@@ -70,5 +70,14 @@ export default class UserDao implements UserDaoI {
   async updateUser(uid: string, user: User): Promise<any> {
     return await UserModel.updateOne({ _id: uid }, { $set: user });
   }
+
+  /**
+   * Searches the user based on the query parameter from the frontend
+   * @param query The query for mathcin the users.
+   * @returns The list of user object.
+   */
+  async searchUser(query: string): Promise<any> {
+    return await UserModel.find({ 'username': { '$regex': query, '$options': 'i' } });
+  }
 }
 

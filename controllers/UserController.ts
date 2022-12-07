@@ -22,6 +22,8 @@ import UserDaoI from "../interfaces/UserDaoI";
  *      <li>DELETE /users/username/:username/delete deletes the existing 
  *      user from the database identified by the user name.
  *      </li>
+ *    <li>GET /users/search/:query finds the user based on the query.
+ *     </li>
  * </ul>
  * @property {UserDao} userDao Singleton DAO implementing likes CRUD operations.
  * @property {Express} app Express app to add the routes.
@@ -45,6 +47,7 @@ export default class UserController implements UserControllerI {
     this.app.delete('/users/:userid', this.deleteUser);
     this.app.delete('/users/username/:username/delete', this.deleteUserByUsername);
     this.app.put('/users/:userid', this.updateUser);
+    this.app.get('/users/search/:query', this.searchUser);
   }
 
 
@@ -119,5 +122,17 @@ export default class UserController implements UserControllerI {
   updateUser = (req: Request, res: Response) =>
     this.userDao.updateUser(req.params.userid, req.body)
       .then(status => res.json(status));
+
+  /**
+  * Searches for a specific user based on their username.
+  * 
+  * @param {Request} req Represents request from client, representing
+  * a specific search query.
+  * @param {Response} res Represents response to client, including the
+  * body formatted as JSON object of list of users found.
+  */
+  searchUser = (req: Request, res: Response) =>
+    this.userDao.searchUser(req.params.query)
+      .then(result => res.json(result));
 }
 
