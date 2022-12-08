@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
 
+/**
+ * An interface that provides common operations that
+ * can be done on the chat collection.
+ */
 export default interface ChatControllerI {
     getAllChatsById(req: Request, res: Response): void;
     deleteSingleChat(req: Request, res: Response): void;
