@@ -1,6 +1,7 @@
 import User from "../models/User";
 import UserModel from "../mongoose/UserModel";
 import UserDaoI from "../interfaces/UserDaoI";
+import admin from 'firebase-admin';
 
 /**
  * @class A class that defines the CRUD operations on 
@@ -49,6 +50,7 @@ export default class UserDao implements UserDaoI {
    * @returns The JSON object with delete count.
    */
   async deleteUser(uid: string): Promise<any> {
+    await admin.auth().deleteUser(uid);
     return await UserModel.deleteOne({ _id: uid });
   }
 
