@@ -68,10 +68,11 @@ export default class ChatDao implements ChatDaoI {
    * @returns List of message objects
    */
   getAllMessagesInSingleChat = async (userId1: String, userId2: String): Promise<any> => {
-    return await ChatModel.find(
+    const messages =  await ChatModel.find(
       { userId1, userId2 }, 
       { messages : 1 } // include the messages field
     )
+    return messages
   }
 
   /**

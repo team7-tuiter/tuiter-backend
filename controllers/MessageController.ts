@@ -1,12 +1,13 @@
 // import MessageDao from "../daos/MessageDao";
-import MessageDaoI from "../interfaces/MessageDaoI";
 import validateFirebaseToken from "../services/FirebaseAuthVerification";
 const { Server } = require("socket.io")
-
+import ChatDao from "../daos/ChatDao"
+import ChatDaoI from "../interfaces/ChatDaoI"
 
 export default class MessageController {
 
   // private messageDao: MessageDaoI = MessageDao.getInstance();
+  private static chatDao: ChatDaoI = ChatDao.getInstance();
   private static server: any;
   private clientOrigin: string;
 
@@ -42,14 +43,15 @@ export default class MessageController {
       console.log(`User Connected: ${socket.session.uid}`)
 
       socket.on("join_room", (data: any) => {
-        const uid = socket.session['uid'];
-        socket.join(data);
-        console.log(`User with ID: ${socket.id} joined room: ${data}`);
+        const uid = socket.session['uid']
+        socket.join(data)
+        console.log(`User with ID: ${socket.id} joined room: ${data}`)
       })
 
       socket.on("send_message", (data: any) => {
+        console.log("data")
         socket.to(data.room).emit("receive_message", data);
-        // this.messageDao.send(req.params.uid, req.params.tuid, req.body.message)
+        MessageController.chatDao.sendMessage(data.userId1, data.userId2, data.messages)
       })
 
       socket.on("disconnect", () => {
