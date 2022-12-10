@@ -49,7 +49,6 @@ export default class MessageController {
       })
 
       socket.on("send_message", (data: any) => {
-        console.log("data")
         socket.to(data.room).emit("receive_message", data);
         MessageController.chatDao.sendMessage(data.userId1, data.userId2, data.messages)
       })
