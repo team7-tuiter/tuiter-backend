@@ -13,7 +13,7 @@ const ChatSchema = new mongoose.Schema<Chat>({
       from: {type: String, ref: "UserModel" },
       to: {type: String, ref: "UserModel" },
       type: {type: Schema.Types.String, default: MessageType.String, enum: MessageType },
-      message: {type: Schema.Types.String, required: true },
+      message: {type: Schema.Types.String },
       sentOn: {type: Schema.Types.Date, default: Date.now }
     }]
   }, { collection: "chat" });

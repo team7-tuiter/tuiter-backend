@@ -55,7 +55,10 @@ export default class ChatDao implements ChatDaoI {
    * @returns The newly created chat object.
    */
   createChat = async (chat: Chat): Promise<Chat> => {
-    return await ChatModel.create(chat);
+    let chatModel = await ChatModel.create(chat)
+    chatModel = await (await (await chatModel.populate('userId2'))
+      .populate("userId1")).populate("messages.from")
+    return chatModel
   }
 
   /**
@@ -109,17 +112,11 @@ export default class ChatDao implements ChatDaoI {
         { userId1: userId },
         { userId2: userId }
       ]
-    }, 
-    {
-      messages: {
-        $slice: -1, // only return the last message from each chat object
-        $project: {
-          from: 1, // include the 'from' field
-          sentOn: 1, // include the 'sentOn' field
-          message: 1 // include the 'message' field
-        }
-      }
-    }).populate('from', 'username')
+      }, { messages: { $slice: -1 } })
+      .populate('messages.from')
+      .populate('messages.to')
+      .populate('userId1')
+      .populate('userId2')
   }
 
 }
