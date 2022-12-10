@@ -11,4 +11,5 @@ export default interface ChatDaoI {
   getAllMessagesInSingleChat(userId1: String, userId2: String): Promise<any>
   deleteSingleMessage(userId1: String, userId2: String, messageId: String): Promise<any>
   lastMessages(userId: String): Promise<any>
+  sendMessage(userId1: String, userId2: String, message: String): Promise<any>;
 }

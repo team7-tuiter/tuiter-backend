@@ -10,4 +10,5 @@ export default interface ChatControllerI {
     createChat(req: Request, res: Response): void;
     getAllMessagesInSingleChat(req: Request, res: Response): void;
     deleteSingleMessage(req: Request, res: Response): void;
+    lastMessages(req: Request, res: Response): void;
 }

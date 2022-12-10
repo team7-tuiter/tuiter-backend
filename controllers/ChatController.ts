@@ -37,6 +37,7 @@ export default class ChatController implements ChatControllerI {
         if (ChatController.chatController === null) {
             ChatController.chatController = new ChatController();
             app.get("/users/:uid/chats", ChatController.chatController.getAllChatsById);
+            app.get("/users/:uid/chats/last", ChatController.chatController.lastMessages);
             app.delete("/users/:uid1/users/:uid2/chat", ChatController.chatController.deleteSingleChat);
             app.post("/chat", ChatController.chatController.createChat);
             app.get("/users/:uid1/users/:uid2/chat", ChatController.chatController.getAllMessagesInSingleChat);
@@ -47,13 +48,22 @@ export default class ChatController implements ChatControllerI {
 
     /**
    * Gets all chats from the database with the id provided.
-   * 
    * @param {Request} req Represents request from client, including any parameters needed.
    * @param {Response} res Represents response to client, including the
    * body formatted as JSON Object containing the chat objects
    */
     getAllChatsById(req: Request, res: Response): void {
         ChatController.chatDao.getAllChatsById(req.params.uid).then(result => res.json(result));
+    }
+
+    /**
+     * Get the last messages in a user's chats
+     * @param req Represents request from client, including the user id.
+     * @param res Represents response to client, including the 
+     * body formatted as JSON Object containing the message objects
+     */
+    lastMessages(req: Request, res: Response): void {
+        ChatController.chatDao.lastMessages(req.params.uid).then(result => res.json(result));
     }
 
     /**
@@ -72,8 +82,13 @@ export default class ChatController implements ChatControllerI {
    * @param {Request} req Represents request from client, including the chat object as part of the body.
    * @param {Response} res Represents response to client, JSON object of the newly created chat.
    */
-    createChat(req: Request, res: Response): void {
-        ChatController.chatDao.createChat(req.body).then(result => res.json(result))
+    async createChat(req: Request, res: Response): Promise<any> {
+        const userId1 = req.body.userId1
+        const userId2 = req.body.userId2
+        const doesChatExist = await ChatController.chatDao.getAllMessagesInSingleChat(userId1, userId2)
+        if (Array.isArray(doesChatExist) && doesChatExist.length === 0) {
+            ChatController.chatDao.createChat(req.body).then(result => res.json(result))
+        }
     }
 
     /**
