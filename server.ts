@@ -32,7 +32,6 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.listen(process.env.PORT);
 
 app.get("/", (req: Request, res: Response) =>
   res.send("Welcome to Foundation of Software Engineering!!!!")
