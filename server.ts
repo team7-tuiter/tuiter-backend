@@ -13,6 +13,8 @@ import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
 import ChatController from "./controllers/ChatController";
 import AuthController from "./controllers/AuthController";
+import {Request, Response} from "express";
+
 require('dotenv').config()
 
 import admin from 'firebase-admin';
@@ -31,6 +33,10 @@ app.use(express.json({ limit: "50mb" }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(process.env.PORT);
+
+app.get("/", (req: Request, res: Response) =>
+  res.send("Welcome to Foundation of Software Engineering!!!!")
+);
 
 const options = {
   useNewUrlParser: true,
