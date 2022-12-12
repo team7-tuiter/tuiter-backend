@@ -43,7 +43,9 @@ class ChatDao {
          * @returns The JSON object with delete count (response).
          */
         this.deleteSingleChat = (userId1, userId2) => __awaiter(this, void 0, void 0, function* () {
-            return yield ChatModel_1.default.deleteOne({ userId1, userId2 });
+            const res = yield ChatModel_1.default.deleteOne({ userId1, userId2 });
+            console.log("userId1", userId1, "userId2", userId2);
+            return res;
         });
         /**
          * Creates chat object in database.
