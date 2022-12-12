@@ -44,7 +44,6 @@ class ChatDao {
          */
         this.deleteSingleChat = (userId1, userId2) => __awaiter(this, void 0, void 0, function* () {
             const res = yield ChatModel_1.default.deleteOne({ userId1, userId2 });
-            console.log("userId1", userId1, "userId2", userId2);
             return res;
         });
         /**
