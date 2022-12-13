@@ -1,6 +1,7 @@
 import User from "../models/User";
 import UserModel from "../mongoose/UserModel";
 import UserDaoI from "../interfaces/UserDaoI";
+import admin from 'firebase-admin';
 
 /**
  * @class A class that defines the CRUD operations on 
@@ -26,6 +27,15 @@ export default class UserDao implements UserDaoI {
   }
 
   /**
+   * Fetches a single user object based on the username.
+   * @param uid The usermname of the user.
+   * @returns The JSON object of the user.
+   */
+  async findUserByUsername(username: string): Promise<any> {
+    return await UserModel.findOne({ username: username });
+  }
+
+  /**
    * Creates a new user in the database.
    * @param user The json representation of user object.
    * @returns The newly created user object.
@@ -40,6 +50,7 @@ export default class UserDao implements UserDaoI {
    * @returns The JSON object with delete count.
    */
   async deleteUser(uid: string): Promise<any> {
+    await admin.auth().deleteUser(uid);
     return await UserModel.deleteOne({ _id: uid });
   }
 
@@ -60,6 +71,15 @@ export default class UserDao implements UserDaoI {
    */
   async updateUser(uid: string, user: User): Promise<any> {
     return await UserModel.updateOne({ _id: uid }, { $set: user });
+  }
+
+  /**
+   * Searches the user based on the query parameter from the frontend
+   * @param query The query for mathcin the users.
+   * @returns The list of user object.
+   */
+  async searchUser(query: string): Promise<any> {
+    return await UserModel.find({ 'username': { '$regex': query, '$options': 'i' } });
   }
 }
 

@@ -23,83 +23,102 @@ export default class ChatDao implements ChatDaoI {
   };
 
   /**
-   * Creates chat object in database.
-   *
-   * @param userId1 The smallest user id.
-   * @param userId2 The largest user id.
-   * @param messages the Chat being recorded.
-   * @returns The newly created chat object.
-   */
-  createChat = async ( chat: Chat ): Promise<Chat> => {
-    return await ChatModel.create(chat);
-  };
-
-  /**
-   * Updates the existing chat in the database.
-   *
-   * @param userId1 The smallest user id.
-   * @param userId2 The largest user id.
-   * @param message The new message array in form of request body.
-   * @returns The newly created chat object.
-   */
-  updateChat = async (
-    userId1: String,
-    userId2: String,
-    messages: Chat
-  ): Promise<any> => {
-    await ChatModel.deleteOne({
-      "userId1": userId1,
-      "userId2": userId2,
-    });
-    return await ChatModel.create(
-      messages
-    );
-  };
-
-  /**
-   * Fetches the last message of the user.
-   *
-   * @param from the user id of the sender.
-   * @returns a JSON object which consits of the latest message.
-   */
-  lastMessages = async (from: string): Promise<any> => {
-    return await ChatModel.find({from}, { messages: { $slice: -1 } });
-  };
-
-  /**
-   * Fetches a single chat object based on the user ids provided.
-    *
-    * @param from The user id of the sender.
-    * @param to The user id of the receiver.
-    * @returns The single chat object.
-    */
-  getSingleChat = async (from: String, to: String): Promise<any> => {
-    return await ChatModel.findOne({ from, to });
-  };
-
-  /**
    * Fetches all chat objects where the user id provided is the sender.
-   *
-   * @param id The user id of the sender.
+   * @param userId The user id of the sender.
    * @returns A list of chat objects where the user id is the sender.
    */
-  getAllChatsById = async (id: String): Promise<Chat[]> => {
-    const chats = await ChatModel.find({ "messages.from": id });
+  getAllChatsById = async (userId: String): Promise<Chat[]> => {
+    const chats = await ChatModel.find({
+      // check both userId1 and userId2 fields when making the query
+      $or: [
+        { userId1: userId },
+        { userId2: userId }
+      ]
+    })
     return chats
-  };
+  }
 
   /**
    * Deletes an existing chat in the database.
    *
-   * @param from The user id of the sender.
-   * @param to The user id of the receiver.
+   * @param userId1 smallest user id by string comparison.
+   * @param userId2 largest user id by string comparison.
    * @returns The JSON object with delete count (response).
    */
-  deleteSingleChat = async (from: String, to: String): Promise<any> => {
-    return await ChatModel.deleteOne({
-      "messages.from": from,
-      "messages.to": to,
-    });
-  };
+  deleteSingleChat = async (userId1: String, userId2: String): Promise<any> => {
+    const res = await ChatModel.deleteOne({ userId1, userId2 })
+    return res
+  }
+
+  /**
+   * Creates chat object in database.
+   * @param chat chat object
+   * @returns The newly created chat object.
+   */
+  createChat = async (chat: Chat): Promise<Chat> => {
+    let chatModel = await ChatModel.create(chat)
+    chatModel = await (await (await chatModel.populate('userId2'))
+      .populate("userId1")).populate("messages.from")
+    return chatModel
+  }
+
+  /**
+   * Gets all messages in single chat 
+   * @param userId1 largest user id by string comparison.
+   * @param userId2 smallest user id by string comparison.
+   * @returns List of message objects
+   */
+  getAllMessagesInSingleChat = async (userId1: String, userId2: String): Promise<any> => {
+    const messages =  await ChatModel.find(
+      { userId1, userId2 }, 
+      { messages : 1 } // include the messages field
+    )
+    return messages
+  }
+
+  /**
+   * Send a message from one user to another
+   * @param userId1 largest user id by string comparison.
+   * @param userId2 smallest user id by string comparison.
+   * @param message message object
+   * @returns update status 
+   */
+  sendMessage = async (userId1: String, userId2: String, message: any): Promise<any> => {
+    return ChatModel.updateOne(
+      { userId1, userId2 },
+      { $push: { messages: message }}
+    )
+  }
+
+  /**
+   * Delete single message in a conversation
+   * @param userId1 largest user id by string comparison.
+   * @param userId2 smallest user id by string comparison.
+   * @returns The JSON object with delete count (response).
+   */
+  deleteSingleMessage = async (userId1: String, userId2: String, messageId: String): Promise<any> => {
+    return await ChatModel.updateOne(
+      { userId1, userId2 }, 
+      { $pull: { messages: { id: messageId } } })
+  }
+
+  /**
+   * Fetches the last messages of the user.
+   * @param userId the user id
+   * @returns list of messages (last messages that appear in a users conversation)
+   */
+  lastMessages = async (userId: string): Promise<any> => {
+    return await ChatModel.find({
+      // check both userId1 and userId2 fields when making the query
+      $or: [
+        { userId1: userId },
+        { userId2: userId }
+      ]
+      }, { messages: { $slice: -1 } })
+      .populate('messages.from')
+      .populate('messages.to')
+      .populate('userId1')
+      .populate('userId2')
+  }
 
 }

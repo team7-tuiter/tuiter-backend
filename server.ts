@@ -1,7 +1,7 @@
 /**
  * @file Implements an Express Node HTTP server.
  */
-import express, { Request, Response } from "express";
+import express from "express";
 import { connect } from "mongoose";
 import BookmarkController from "./controllers/BookmarkController";
 import FollowController from "./controllers/FollowController";
@@ -12,17 +12,28 @@ import UserController from "./controllers/UserController";
 import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
 import ChatController from "./controllers/ChatController";
+import {Request, Response} from "express";
+
+require('dotenv').config()
+
+import admin from 'firebase-admin';
+admin.initializeApp({
+  credential: admin.credential.cert(require("./cs5500-team7-firebase-adminsdk-fkii9-8da2c9299b.json"))
+});
 const cors = require("cors");
 const app = express();
 const bodyParser = require('body-parser');
 const http = require('http')
-const clientOrigin = "http://localhost:3000"
+const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000"
 
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.get("/", (req: Request, res: Response) =>
+  res.send("Welcome to Foundation of Software Engineering!!!!")
+);
 
 const options = {
   useNewUrlParser: true,
@@ -69,6 +80,8 @@ const bookmarkController = BookmarkController.getInstance(app);
 
 // Create ChatController 
 const chatController = ChatController.getInstance(app)
+
+//const authController = AuthController.getInstance(app);
 
 // server for socket io
 const server = http.createServer(app)

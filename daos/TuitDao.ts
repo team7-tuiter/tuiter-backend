@@ -24,7 +24,7 @@ export default class TuitDao implements TuitDaoI {
    * @returns The promise that resolves to array of tuits.
    */
   async findTuitsByUser(uid: string): Promise<Tuit[]> {
-    return await TuitModel.find({ postedBy: uid });
+    return await TuitModel.find({ postedBy: uid }).populate("postedBy");
   }
 
   /**
@@ -33,7 +33,7 @@ export default class TuitDao implements TuitDaoI {
    * @returns A promise that resolves to tuit object
    */
   async findTuitById(tid: string): Promise<any> {
-    return await TuitModel.findById(tid);
+    return await TuitModel.findById(tid).populate("postedBy");
   }
 
   /**

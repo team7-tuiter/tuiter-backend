@@ -9,6 +9,7 @@
     "strict": true,
     "removeComments": false,
     "preserveConstEnums": true,
-    "sourceMap": false
+    "sourceMap": false,
+    "resolveJsonModule": true
   }
 }
