@@ -12,7 +12,6 @@ import UserController from "./controllers/UserController";
 import TuitDao from "./daos/TuitDao";
 import UserDao from "./daos/UserDao";
 import ChatController from "./controllers/ChatController";
-import AuthController from "./controllers/AuthController";
 import {Request, Response} from "express";
 
 require('dotenv').config()
@@ -25,7 +24,7 @@ const cors = require("cors");
 const app = express();
 const bodyParser = require('body-parser');
 const http = require('http')
-const clientOrigin = "http://localhost:3000"
+const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000"
 
 
 app.use(cors());

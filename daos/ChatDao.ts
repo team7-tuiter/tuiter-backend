@@ -46,7 +46,8 @@ export default class ChatDao implements ChatDaoI {
    * @returns The JSON object with delete count (response).
    */
   deleteSingleChat = async (userId1: String, userId2: String): Promise<any> => {
-    return await ChatModel.deleteOne({ userId1, userId2 })
+    const res = await ChatModel.deleteOne({ userId1, userId2 })
+    return res
   }
 
   /**

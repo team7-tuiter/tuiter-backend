@@ -26,7 +26,7 @@ const cors = require("cors");
 const app = (0, express_1.default)();
 const bodyParser = require('body-parser');
 const http = require('http');
-const clientOrigin = "http://localhost:3000";
+const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000";
 app.use(cors());
 app.use(express_1.default.json({ limit: "50mb" }));
 app.use(bodyParser.json());
